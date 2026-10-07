@@ -160,7 +160,7 @@ async function registrarCompra() {
   } catch (error) {
 
     resultado.textContent =
-      "❌ No se pudo registrar la compra.";
+      "❌ Error: " + error.message;
 
   } finally {
 
