@@ -81,7 +81,9 @@ button:disabled {
   </div>
 
   <h2>Registrar compra</h2>
-
+<button type="button" onclick="iniciarSesion()">
+  🔐 Iniciar sesión
+</button>
   <p>Introduce el ID de la tarjeta del cliente.</p>
 
   <input
@@ -108,7 +110,35 @@ PEGA AQUÍ LA MISMA SUPABASE_KEY
 QUE YA TIENES EN index.html
 */
 const SUPABASE_KEY = "sb_publishable_YAKtkxRA1sH3zdE3R_4iSg_KScO8EtI";
+async function iniciarSesion() {
+  const email = prompt("Correo del administrador:");
+  if (!email) return;
 
+  const password = prompt("Contraseña:");
+  if (!password) return;
+
+  const response = await fetch(
+    `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+    {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password })
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    alert("No se pudo iniciar sesión. Revisa tus datos.");
+    return;
+  }
+
+  sessionStorage.setItem("ramen_staff_token", data.access_token);
+  alert("Sesión iniciada correctamente.");
+}
 async function registrarCompra() {
 const token = sessionStorage.getItem("ramen_staff_token");
 
