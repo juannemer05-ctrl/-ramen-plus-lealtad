@@ -266,10 +266,25 @@ try {
   }
 
   const id = await response.json();
+ tarjetaParaCompartir = "https://juannemer05-ctrl.github.io/-ramen-plus-lealtad/?id=" + id;
+
+document.getElementById("compartirTarjeta").style.display = "block"; 
   resultado.textContent = "✅ Cliente registrado. ID: " + id;
 } catch (error) {
   resultado.textContent = "❌ Error: " + error.message;
 }
+}
+  let tarjetaParaCompartir = "";
+
+function compartirTarjeta() {
+  if (!tarjetaParaCompartir) return;
+
+  const mensaje = "🎁 ¡Bienvenido a RAMEN+! Aquí está tu tarjeta de lealtad. Compra 6 veces y tu 7ª bebida es GRATIS:\n" + tarjetaParaCompartir;
+
+  window.open(
+    "https://wa.me/?text=" + encodeURIComponent(mensaje),
+    "_blank"
+  );
 }
 </script>
   <input id="nuevoNombre"
@@ -289,6 +304,9 @@ try {
   </button>
 
   <p id="resultadoRegistro"></p>
+    <button id="compartirTarjeta" style="display:none; background:#25D366;" onclick="compartirTarjeta()">
+  📲 Compartir tarjeta por WhatsApp
+</button>
 </section>
 
 </body>
