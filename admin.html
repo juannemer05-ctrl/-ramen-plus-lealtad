@@ -149,7 +149,8 @@ async function registrarCompra() {
     );
 
     if (!response.ok) {
-      throw new Error("No se pudo registrar");
+    const detalle = await response.text();
+throw new Error(detalle);
     }
 
     const total = await response.json();
