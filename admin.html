@@ -206,6 +206,31 @@ throw new Error(detalle);
 }
 
 </script>
+  <section class="card" style="margin-top:20px">
+  <h2>Registrar nuevo cliente</h2>
+<script>
+async function registrarCliente() {
+  alert("Botón de registro conectado correctamente");
+}
+</script>
+  <input id="nuevoNombre"
+    placeholder="Nombre del cliente">
+
+  <input id="nuevoCelular"
+    type="tel"
+    placeholder="Celular (opcional)">
+
+  <label>
+    <input id="aceptaPromos" type="checkbox">
+    Acepto recibir promociones por WhatsApp
+  </label>
+
+  <button onclick="registrarCliente()">
+    Registrar cliente
+  </button>
+
+  <p id="resultadoRegistro"></p>
+</section>
 
 </body>
 </html>
