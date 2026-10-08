@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acceso empleados | RAMEN+</title>
+<style>
+body{font-family:Arial,sans-serif;background:#fff7db;min-height:100vh;display:grid;place-items:center;margin:0;padding:18px;box-sizing:border-box}
+.card{background:white;border-radius:25px;padding:30px 24px;max-width:420px;width:100%;box-sizing:border-box;text-align:center}
+h1{font-size:44px;margin:0}h1 span{color:#edc84f}
+input,button{box-sizing:border-box;width:100%;padding:16px;margin-top:13px;border-radius:12px;font-size:16px}
+input{border:1px solid #ccc}button{border:0;background:#111;color:white;font-weight:bold}
+.secondary{background:#fff;color:#111;border:1px solid #ccc}
+#msg{line-height:1.5;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>RAMEN<span>+</span></h1>
+<h2>Acceso de empleados</h2>
+<input id="email" type="email" placeholder="Correo electrónico" autocomplete="email">
+<input id="password" type="password" placeholder="Contraseña" autocomplete="current-password">
+<button id="entrar">Iniciar sesión</button>
+<button class="secondary" id="recuperar">Recuperar contraseña</button>
+<p id="msg"></p>
+</div>
+<script>
+const URL_BASE="https://hkprarjyormsogskdddz.supabase.co";
+const RECUPERAR="https://juannemer05-ctrl.github.io/-ramen-plus-lealtad/recuperar.html";
+const msg=document.getElementById("msg");
+const email=document.getElementById("email");
+const password=document.getElementById("password");
+const entrar=document.getElementById("entrar");
+const recuperar=document.getElementById("recuperar");
+const KEY="sb_publishable_YAKtkxRA1sH3zdE3R_4iSg_KScO8EtI";
+async function peticion(ruta,cuerpo){
+const r=await fetch(URL_BASE+"/auth/v1/"+ruta,{
+method:"POST",
+headers:{"apikey":KEY,"Content-Type":"application/json"},
+body:JSON.stringify(cuerpo)
+});
+const data=await r.json();
+if(!r.ok)throw Error(data.msg||data.error_description||data.message||"No se pudo completar");
+return data;
+}
+entrar.onclick=async()=>{
+msg.textContent="Verificando...";
+try{
+const data=await peticion("token?grant_type=password",{email:email.value.trim(),password:password.value});
+if(!data.access_token)throw Error("No se recibió una sesión");
+sessionStorage.setItem("ramen_staff_token",data.access_token);
+msg.textContent="Sesión iniciada. Falta conectar el panel de empleados.";
+}catch(e){msg.textContent=e.message;}
+};
+recuperar.onclick=async()=>{
+if(!email.value.trim()){msg.textContent="Escribe primero tu correo.";return;}
+msg.textContent="Solicitando correo...";
+try{
+await peticion("recover?redirect_to="+encodeURIComponent(RECUPERAR),{email:email.value.trim()});
+msg.textContent="Si el correo está registrado y el servicio permite el envío, recibirás instrucciones. Revisa Gmail.";
+}catch(e){msg.textContent=e.message;}
+};
+</script>
+</body>
+</html>
