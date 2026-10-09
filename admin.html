@@ -107,6 +107,9 @@ button:disabled {
     placeholder="ID del cliente"
     autocomplete="off"
   >
+  <button type="button" onclick="abrirCamaraQR()">
+  📷 Escanear QR del cliente
+</button>
 
   <button id="btn" onclick="registrarCompra()">
     ✓ Agregar compra
@@ -114,7 +117,7 @@ button:disabled {
 <button style="display:none" id="btnCanjear"id="btnCanjear" onclick="canjearPremio()">
   🎁 Canjear bebida gratis
 </button>
-
+<div id="lectorQR" style="display:none; width:100%;"></div>
   <div id="resultado"></div>
 
 </div>
@@ -420,8 +423,47 @@ async function canjearPremio() {
     resultado.textContent = "❌ " + error.message;
   }
 }
- 
-</script>
+ let escanerQR = null;
 
+async function abrirCamaraQR() {
+  const lector = document.getElementById("lectorQR");
+  lector.style.display = "block";
+
+  try {
+    if (!window.Html5Qrcode) {
+      throw new Error("No se pudo cargar el lector QR");
+    }
+
+    escanerQR = new Html5Qrcode("lectorQR");
+
+    await escanerQR.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 250 },
+      async (textoQR) => {
+        try {
+          const url = new URL(textoQR);
+          const id = url.searchParams.get("id");
+
+          if (!id) {
+            throw new Error("El QR no contiene un ID válido");
+          }
+
+          document.getElementById("customerId").value = id;
+          await escanerQR.stop();
+          escanerQR.clear();
+          lector.style.display = "none";
+          alert("✅ Cliente identificado. Ya puedes registrar su compra.");
+        } catch (error) {
+          alert("❌ " + error.message);
+        }
+      },
+      () => {}
+    );
+  } catch (error) {
+    alert("❌ No se pudo abrir la cámara: " + error.message);
+  }
+}
+</script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 </body>
 </html>
