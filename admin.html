@@ -111,7 +111,7 @@ button:disabled {
   <button id="btn" onclick="registrarCompra()">
     ✓ Agregar compra
   </button>
-<button id="btnCanjear" onclick="canjearPremio()">
+<button style="display:none" id="btnCanjear"id="btnCanjear" onclick="canjearPremio()">
   🎁 Canjear bebida gratis
 </button>
 
@@ -211,7 +211,8 @@ throw new Error(detalle);
 
     resultado.textContent =
       `✅ Compra registrada. Total: ${total}`;
-
+document.getElementById("btnCanjear").style.display =
+  Number(total) >= 6 ? "block" : "none";
   } catch (error) {
 
     resultado.textContent =
