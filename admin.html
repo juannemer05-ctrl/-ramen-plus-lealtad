@@ -312,14 +312,12 @@ function compartirTarjeta() {
 <button type="button" onclick="escanearQR()">
   📷 Escanear QR del cliente
 </button>
-
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script>
 
 async function escanearQR() {
-  if (!("BarcodeDetector" in window)) {
-    alert("Este navegador no admite este lector QR.");
-    return;
-  }
+ 
+  
 
   const archivo = document.createElement("input");
   archivo.type = "file";
@@ -332,11 +330,19 @@ async function escanearQR() {
       if (!foto) return;
 
       const imagen = await createImageBitmap(foto);
-      const lector = new BarcodeDetector({
-        formats: ["qr_code"]
-      });
+    
 
-      const codigos = await lector.detect(imagen);
+      const canvas = document.createElement("canvas");
+canvas.width = imagen.width;
+canvas.height = imagen.height;
+
+const ctx = canvas.getContext("2d");
+ctx.drawImage(imagen, 0, 0);
+
+const datos = ctx.getImageData(0, 0, canvas.width, canvas.height);
+const qr = jsQR(datos.data, datos.width, datos.height);
+
+const codigos = qr ? [{ rawValue: qr.data }] : [];
       imagen.close();
 
       if (!codigos.length) {
