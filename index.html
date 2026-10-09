@@ -258,6 +258,25 @@ async function registrarCompra() {
   }
 }
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const id = new URLSearchParams(location.search).get("id");
+  if (!id) return;
 
+  const qr = document.createElement("div");
+  qr.style.cssText = "background:white;padding:20px;text-align:center;border-radius:20px;margin:20px auto;max-width:300px";
+  qr.innerHTML = `
+    <h3>Mi código QR RAMEN+</h3>
+    <img
+      src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(location.origin + location.pathname + "?id=" + id)}"
+      alt="Código QR del cliente"
+      style="width:220px;max-width:100%"
+    >
+    <p>Presenta este QR en cada compra</p>
+  `;
+
+  document.body.appendChild(qr);
+});
+</script>
 </body>
 </html>
