@@ -315,7 +315,11 @@ function compartirTarjeta() {
 
 <script>
 function escanearQR() {
-  alert("Próximamente activaremos la cámara para leer el QR.");
+  const archivo = document.createElement("input");
+archivo.type = "file";
+archivo.accept = "image/*";
+archivo.capture = "environment";
+archivo.click();
 }
 </script>
 
