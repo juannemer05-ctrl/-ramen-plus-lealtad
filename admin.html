@@ -314,13 +314,54 @@ function compartirTarjeta() {
 </button>
 
 <script>
-function escanearQR() {
+
+async function escanearQR() {
+  if (!("BarcodeDetector" in window)) {
+    alert("Este navegador no admite este lector QR.");
+    return;
+  }
+
   const archivo = document.createElement("input");
-archivo.type = "file";
-archivo.accept = "image/*";
-archivo.capture = "environment";
-archivo.click();
-}
+  archivo.type = "file";
+  archivo.accept = "image/*";
+  archivo.capture = "environment";
+
+  archivo.onchange = async () => {
+    try {
+      const foto = archivo.files[0];
+      if (!foto) return;
+
+      const imagen = await createImageBitmap(foto);
+      const lector = new BarcodeDetector({
+        formats: ["qr_code"]
+      });
+
+      const codigos = await lector.detect(imagen);
+      imagen.close();
+
+      if (!codigos.length) {
+        alert("No se encontró un código QR.");
+        return;
+      }
+
+      const enlace = new URL(codigos[0].rawValue);
+      const id = enlace.searchParams.get("id");
+
+      if (!id) {
+        alert("El QR no contiene un ID válido.");
+        return;
+      }
+
+      document.getElementById("customerId").value = id;
+      alert("✅ Tarjeta identificada. Ya puedes agregar la compra.");
+
+    } catch (error) {
+      alert("No se pudo leer el QR: " + error.message);
+    }
+  };
+
+  archivo.click();
+  }
 </script>
 
 </body>
