@@ -414,7 +414,7 @@ async function canjearPremio() {
       throw new Error(datos.message || "No se pudo canjear.");
     }
 
-    resultado.textContent = "🎁 Bebida gratis canjeada 
+  resultado.textContent = "🎁 Bebida gratis canjeada correctamente.";
       document.getElementById("btnCanjear").style.display = "none";
   } catch (error) {
     resultado.textContent = "❌ " + error.message;
