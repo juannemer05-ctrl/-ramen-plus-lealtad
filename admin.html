@@ -111,6 +111,9 @@ button:disabled {
   <button id="btn" onclick="registrarCompra()">
     ✓ Agregar compra
   </button>
+<button id="btnCanjear" onclick="canjearPremio()">
+  🎁 Canjear bebida gratis
+</button>
 
   <div id="resultado"></div>
 
@@ -370,6 +373,52 @@ const codigos = qr ? [{ rawValue: qr.data }] : [];
 
   archivo.click();
   }
+ 
+async function canjearPremio() {
+  const id = document.getElementById("customerId").value.trim();
+  const resultado = document.getElementById("resultado");
+  const token = sessionStorage.getItem("ramen_staff_token");
+
+  if (!token) {
+    alert("Debes iniciar sesión.");
+    return;
+  }
+
+  if (!id) {
+    alert("Primero escanea o escribe el ID del cliente.");
+    return;
+  }
+
+  if (!confirm("¿Confirmas que entregaste la bebida gratis?")) {
+    return;
+  }
+
+  try {
+    const respuesta = await fetch(
+      SUPABASE_URL + "/rest/v1/rpc/redeem_reward",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_KEY,
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ p_customer_id: id })
+      }
+    );
+
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+      throw new Error(datos.message || "No se pudo canjear.");
+    }
+
+    resultado.textContent = "🎁 Bebida gratis canjeada correctamente.";
+  } catch (error) {
+    resultado.textContent = "❌ " + error.message;
+  }
+}
+ 
 </script>
 
 </body>
