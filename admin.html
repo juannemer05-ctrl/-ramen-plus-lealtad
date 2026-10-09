@@ -340,7 +340,9 @@ const ctx = canvas.getContext("2d");
 ctx.drawImage(imagen, 0, 0);
 
 const datos = ctx.getImageData(0, 0, canvas.width, canvas.height);
-const qr = jsQR(datos.data, datos.width, datos.height);
+const qr = jsQR(datos.data, datos.width, datos.height, {
+  inversionAttempts: "attemptBoth"
+});
 
 const codigos = qr ? [{ rawValue: qr.data }] : [];
       imagen.close();
