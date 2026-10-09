@@ -111,7 +111,7 @@ button:disabled {
   <button id="btn" onclick="registrarCompra()">
     ✓ Agregar compra
   </button>
-<button style="display:block" id="btnCanjear"id="btnCanjear" onclick="canjearPremio()">
+<button style="display:none" id="btnCanjear"id="btnCanjear" onclick="canjearPremio()">
   🎁 Canjear bebida gratis
 </button>
 
@@ -414,7 +414,8 @@ async function canjearPremio() {
       throw new Error(datos.message || "No se pudo canjear.");
     }
 
-    resultado.textContent = "🎁 Bebida gratis canjeada correctamente.";
+    resultado.textContent = "🎁 Bebida gratis canjeada 
+      document.getElementById("btnCanjear").style.display = "none";
   } catch (error) {
     resultado.textContent = "❌ " + error.message;
   }
