@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel administrativo RAMEN+</title>
+<style>
+body{margin:0;background:#fff8da;font-family:Arial,sans-serif;color:#111}
+main{max-width:850px;margin:25px auto;padding:18px}
+h1{text-align:center;font-size:40px;margin-bottom:4px}
+h1 span{color:#efc33d}
+h2{text-align:center}
+section{background:white;border-radius:22px;padding:22px;margin:18px 0}
+input,button{box-sizing:border-box;width:100%;padding:16px;margin:7px 0;border-radius:12px;font-size:16px}
+input{border:1px solid #ccc}
+button{background:#111;color:white;border:0;font-weight:bold;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.card{background:#fff8da;border-radius:15px;padding:18px;text-align:center}
+.numero{font-size:34px;font-weight:bold}
+small{color:#555}
+#panel{display:none}
+#error{color:#b00020}
+</style>
+</head>
+<body>
+<main>
+<h1>RAMEN<span>+</span></h1>
+<h2>Panel administrativo</h2>
+
+<section id="acceso">
+<h3>Acceso autorizado</h3>
+<input id="correo" type="email" placeholder="Correo del empleado">
+<input id="clave" type="password" placeholder="Contraseña">
+<button onclick="entrar()">Iniciar sesión</button>
+<p id="error"></p>
+</section>
+
+<div id="panel">
+<section>
+<h3>Resumen del programa de lealtad</h3>
+<div class="grid">
+<div class="card"><div id="clientes" class="numero">—</div><small>Clientes registrados</small></div>
+<div class="card"><div id="compras" class="numero">—</div><small>Compras registradas</small></div>
+<div class="card"><div id="premios" class="numero">—</div><small>Bebidas gratis canjeadas</small></div>
+<div class="card"><div id="pendientes" class="numero">—</div><small>Premios pendientes</small></div>
+</div>
+<button onclick="actualizar()">Actualizar reporte</button>
+<button onclick="salir()">Cerrar sesión</button>
+<p id="estado"></p>
+</section>
+</div>
+</main>
+
+<script>
+const SUPABASE_URL = "https://hkprarjyormsogskdddz.supabase.co";
+const SUPABASE_KEY = "sb_publishable_YAKtkxRA1sH3zdE3R_4iSg_KScO8EtI";
+
+let token = "";
+
+async function entrar(){
+ const correo=document.getElementById("correo").value.trim();
+ const password=document.getElementById("clave").value;
+ document.getElementById("error").textContent="";
+ try{
+  const r=await fetch(SUPABASE_URL+"/auth/v1/token?grant_type=password",{
+   method:"POST",
+   headers:{"apikey":SUPABASE_KEY,"Content-Type":"application/json"},
+   body:JSON.stringify({email:correo,password})
+  });
+  const d=await r.json();
+  if(!r.ok || !d.access_token)throw Error("Correo o contraseña incorrectos.");
+  token=d.access_token;
+  sessionStorage.setItem("ramen_dashboard_token",token);
+  document.getElementById("acceso").style.display="none";
+  document.getElementById("panel").style.display="block";
+  await actualizar();
+ }catch(e){
+  document.getElementById("error").textContent=e.message;
+ }
+}
+
+async function contar(tabla,filtro=""){
+ const r=await fetch(SUPABASE_URL+"/rest/v1/"+tabla+"?select=id"+filtro,{
+  headers:{
+   "apikey":SUPABASE_KEY,
+   "Authorization":"Bearer "+token,
+   "Prefer":"count=exact",
+   "Range":"0-0"
+  }
+ });
+ if(!r.ok)throw Error("No se pudo consultar "+tabla+". Revisa los permisos del reporte.");
+ const rango=r.headers.get("content-range");
+ if(!rango || !rango.includes("/"))throw Error("No se recibió el conteo.");
+ return rango.split("/")[1];
+}
+
+async function actualizar(){
+ const estado=document.getElementById("estado");
+ estado.textContent="Cargando datos...";
+ try{
+  const [clientes,compras,premios,pendientes]=await Promise.all([
+   contar("customers"),
+   contar("loyalty_events","&event_type=eq.purchase"),
+   contar("loyalty_events","&event_type=eq.reward_redeemed"),
+   contar("customers","&stamp_count=eq.6")
+  ]);
+  document.getElementById("clientes").textContent=clientes;
+  document.getElementById("compras").textContent=compras;
+  document.getElementById("premios").textContent=premios;
+  document.getElementById("pendientes").textContent=pendientes;
+  estado.textContent="Reporte actualizado.";
+ }catch(e){estado.textContent=e.message}
+}
+
+function salir(){
+ token="";
+ sessionStorage.removeItem("ramen_dashboard_token");
+ document.getElementById("panel").style.display="none";
+ document.getElementById("acceso").style.display="block";
+}
+</script>
+</body>
+</html>
