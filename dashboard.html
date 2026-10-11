@@ -165,37 +165,49 @@ async function cargarClientes() {
     const datos = await r.json();
     if (!r.ok) throw new Error(datos.message || "Error al consultar clientes");
 
-    const tabla = document.createElement("table");
-    tabla.style.cssText = "width:100%;border-collapse:collapse;font-size:14px;";
+    const tabla = document.createElement("div");
+    tabla.style.cssText = "display:grid;gap:14px;width:100%;";
 
-    const encabezados = [
-      "Cliente", "Compras acumuladas", "Estado", "Bebidas canjeadas", "Última compra", "Teléfono", "Promociones WhatsApp"
-    ];
-
-    const cabecera = tabla.insertRow();
-    encabezados.forEach(titulo => {
-      const celda = document.createElement("th");
-      celda.textContent = titulo;
-      celda.style.cssText = "padding:6px 4px;font-size:12px;white-space:normal;overflow-wrap:break-word;";
-      cabecera.appendChild(celda);
-    });
+    
 
     datos.forEach(cliente => {
-      const fila = tabla.insertRow();
-      [
-        cliente.cliente,
-        cliente.compras_acumuladas,
-        cliente.estado,
-        cliente.bebidas_canjeadas,
-        cliente.fecha_registro,
-        cliente.ultima_compra,
-        cliente.telefono,
-        String(cliente.promociones_whatsapp).toLowerCase() === "true" ? "Sí" : "No"
-      ].forEach(valor => {
-        const celda = fila.insertCell();
-        celda.textContent = valor ?? "";
-        celda.style.cssText = "padding:6px 4px;border-top:1px solid #ddd";
-      });
+     const tarjeta = document.createElement("div");
+
+tarjeta.style.cssText = "background:white;border:1px solid #ddd;border-radius:14px;padding:16px;box-shadow:0 2px 6px #0001;";
+
+const campos = [
+  ["Cliente", cliente.cliente],
+  ["Compras acumuladas", cliente.compras_acumuladas],
+  ["Estado", cliente.estado],
+  ["Bebidas canjeadas", cliente.bebidas_canjeadas],
+  ["Fecha de registro", cliente.fecha_registro],
+  ["Última compra", cliente.ultima_compra],
+  ["Teléfono", cliente.telefono],
+  ["Promociones WhatsApp",
+    String(cliente.promociones_whatsapp).toLowerCase() === "true" ? "Sí" : "No"]
+];
+
+campos.forEach(([titulo, valor], indice) => {
+  const renglon = document.createElement("div");
+  renglon.style.cssText = "padding:7px 0;border-bottom:1px solid #eee;overflow-wrap:anywhere;";
+
+  const etiqueta = document.createElement("strong");
+  etiqueta.textContent = titulo + ": ";
+
+  const dato = document.createElement("span");
+  dato.textContent = valor ?? "";
+
+  renglon.append(etiqueta, dato);
+
+  if (indice === 0) {
+    renglon.style.fontSize = "18px";
+    renglon.style.fontWeight = "bold";
+  }
+
+  tarjeta.appendChild(renglon);
+});
+
+tabla.appendChild(tarjeta);
     });
 
     contenedor.replaceChildren(tabla);
@@ -205,27 +217,39 @@ async function cargarClientes() {
 } 
  document.getElementById("buscarCliente").addEventListener("input", function () {
   const busqueda = this.value.toLowerCase().trim();
-  const filas = document.querySelectorAll("#tablaClientes table tr");
+  const tarjetas = document.querySelectorAll("#tablaClientes > div > div");
 
-  filas.forEach((fila, indice) => {
-    if (indice === 0) return;
-    const nombre = fila.cells[0]?.textContent.toLowerCase() || "";
-    fila.style.display = nombre.includes(busqueda) ? "" : "none";
-  });
+tarjetas.forEach(tarjeta => {
+  const texto = tarjeta.textContent.toLowerCase();
+  tarjeta.style.display = texto.includes(busqueda) ? "" : "none";
+});
 }); 
 function exportarExcel() {
-  const tabla = document.querySelector("#tablaClientes table");
+  const tabla = document.querySelector("#tablaClientes > div");
 
-  if (!tabla) {
-    alert("Primero presiona Consultar clientes.");
-    return;
-  }
+if (!tabla || !tabla.children.length) {
+  alert("Primero presiona Consultar clientes");
+  return;
+}
 
-  const filas = [...tabla.rows].map(fila =>
-    [...fila.cells].map(celda =>
-      '"' + celda.textContent.trim().replace(/"/g, '""') + '"'
+const encabezados = [
+  "Cliente", "Compras acumuladas", "Estado",
+  "Bebidas canjeadas", "Fecha registro",
+  "Última compra", "Teléfono",
+  "Promociones WhatsApp"
+];
+
+const csv = valor =>
+  '"' + String(valor ?? "").replace(/"/g, '""') + '"';
+
+const filas = [
+  encabezados.map(csv).join(","),
+  ...[...tabla.children].map(tarjeta =>
+    [...tarjeta.children].map(renglon =>
+      csv(renglon.querySelector("span")?.textContent ?? "")
     ).join(",")
-  );
+  )
+];
 
   const contenido = "\uFEFF" + filas.join("\r\n");
   const archivo = new Blob([contenido], {
