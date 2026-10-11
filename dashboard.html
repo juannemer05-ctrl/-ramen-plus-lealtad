@@ -187,7 +187,9 @@ async function cargarClientes() {
         cliente.compras_acumuladas,
         cliente.estado,
         cliente.bebidas_canjeadas,
-cliente.ultima_compra,
+        cliente.fecha_registro,
+        cliente.ultima_compra,
+        cliente.telefono,
         String(cliente.promociones_whatsapp).toLowerCase() === "true" ? "Sí" : "No"
       ].forEach(valor => {
         const celda = fila.insertCell();
