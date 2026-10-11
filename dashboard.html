@@ -169,7 +169,7 @@ async function cargarClientes() {
     tabla.style.cssText = "width:100%;border-collapse:collapse;text-align:left";
 
     const encabezados = [
-      "Cliente", "Compras acumuladas", "Estado", "Bebidas canjeadas", "Última compra"
+      "Cliente", "Compras acumuladas", "Estado", "Bebidas canjeadas", "Última compra", "Teléfono", "Promociones WhatsApp"
     ];
 
     const cabecera = tabla.insertRow();
@@ -187,7 +187,9 @@ async function cargarClientes() {
         cliente.compras_acumuladas,
         cliente.estado,
         cliente.bebidas_canjeadas,
-cliente.ultima_compra
+cliente.ultima_compra,
+cliente.telefono,
+cliente.promociones_whatsapp
       ].forEach(valor => {
         const celda = fila.insertCell();
         celda.textContent = valor ?? "";
