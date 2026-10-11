@@ -51,6 +51,9 @@ small{color:#555}
 </section>
 <section>
   <h3>Detalle de clientes</h3>
+  
+<input id="buscarCliente" type="search" placeholder="🔍 Buscar cliente por nombre o teléfono" oninput="filtrarClientes()">
+  
   <button onclick="cargarClientes()">Consultar clientes</button>
   <div id="tablaClientes" style="overflow-x:auto;"></div>
 </section> 
@@ -196,6 +199,16 @@ async function cargarClientes() {
     contenedor.textContent = e.message;
   }
 } 
+ document.getElementById("buscarCliente").addEventListener("input", function () {
+  const busqueda = this.value.toLowerCase().trim();
+  const filas = document.querySelectorAll("#tablaClientes table tr");
+
+  filas.forEach((fila, indice) => {
+    if (indice === 0) return;
+    const nombre = fila.cells[0]?.textContent.toLowerCase() || "";
+    fila.style.display = nombre.includes(busqueda) ? "" : "none";
+  });
+}); 
 </script>
 </body>
 </html>
