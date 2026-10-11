@@ -166,7 +166,7 @@ async function cargarClientes() {
     if (!r.ok) throw new Error(datos.message || "Error al consultar clientes");
 
     const tabla = document.createElement("table");
-    tabla.style.cssText = "width:100%;border-collapse:collapse;text-align:left";
+    tabla.style.cssText = "width:100%;border-collapse:collapse;font-size:14px;";
 
     const encabezados = [
       "Cliente", "Compras acumuladas", "Estado", "Bebidas canjeadas", "Última compra", "Teléfono", "Promociones WhatsApp"
@@ -176,7 +176,7 @@ async function cargarClientes() {
     encabezados.forEach(titulo => {
       const celda = document.createElement("th");
       celda.textContent = titulo;
-      celda.style.padding = "10px";
+      celda.style.cssText = "padding:6px 4px;font-size:12px;white-space:normal;overflow-wrap:break-word;";
       cabecera.appendChild(celda);
     });
 
@@ -194,7 +194,7 @@ async function cargarClientes() {
       ].forEach(valor => {
         const celda = fila.insertCell();
         celda.textContent = valor ?? "";
-        celda.style.cssText = "padding:10px;border-top:1px solid #ddd";
+        celda.style.cssText = "padding:6px 4px;border-top:1px solid #ddd";
       });
     });
 
