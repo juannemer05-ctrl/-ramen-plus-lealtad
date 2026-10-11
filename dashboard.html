@@ -189,7 +189,7 @@ async function cargarClientes() {
         cliente.bebidas_canjeadas,
 cliente.ultima_compra,
 cliente.telefono,
-cliente.promociones_whatsapp
+cliente.promociones_whatsapp === true ? "Sí" : "No"
       ].forEach(valor => {
         const celda = fila.insertCell();
         celda.textContent = valor ?? "";
