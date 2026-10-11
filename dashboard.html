@@ -206,7 +206,30 @@ campos.forEach(([titulo, valor], indice) => {
 
   tarjeta.appendChild(renglon);
 });
+const telefono = String(cliente.telefono ?? "").replace(/\D/g, "");
+const autorizado =
+  String(cliente.promociones_whatsapp).toLowerCase() === "true";
 
+if (autorizado && telefono.length === 10) {
+  const botonWhatsApp = document.createElement("a");
+
+  const mensaje = `Hola ${cliente.cliente}, te saludamos de RAMEN+ 🍜`;
+
+  botonWhatsApp.href =
+    "https://wa.me/52" + telefono +
+    "?text=" + encodeURIComponent(mensaje);
+
+  botonWhatsApp.target = "_blank";
+  botonWhatsApp.rel = "noopener noreferrer";
+  botonWhatsApp.textContent = "💬 Enviar WhatsApp";
+
+  botonWhatsApp.style.cssText =
+    "display:block;background:#25D366;color:white;" +
+    "padding:12px;border-radius:10px;text-align:center;" +
+    "font-weight:bold;text-decoration:none;margin-top:14px;";
+
+  tarjeta.appendChild(botonWhatsApp);
+}
 tabla.appendChild(tarjeta);
     });
 
@@ -245,7 +268,7 @@ const csv = valor =>
 const filas = [
   encabezados.map(csv).join(","),
   ...[...tabla.children].map(tarjeta =>
-    [...tarjeta.children].map(renglon =>
+    [...tarjeta.children].filter(renglon => renglon.tagName === "DIV").map(renglon =>
       csv(renglon.querySelector("span")?.textContent ?? "")
     ).join(",")
   )
