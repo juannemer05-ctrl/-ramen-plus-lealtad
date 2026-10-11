@@ -51,7 +51,7 @@ small{color:#555}
 </section>
 <section>
   <h3>Detalle de clientes</h3>
-  
+  <button onclick="exportarExcel()">📊 Exportar clientes a Excel</button>
 <input id="buscarCliente" type="search" placeholder="🔍 Buscar cliente por nombre o teléfono" oninput="filtrarClientes()">
   
   <button onclick="cargarClientes()">Consultar clientes</button>
@@ -209,6 +209,31 @@ async function cargarClientes() {
     fila.style.display = nombre.includes(busqueda) ? "" : "none";
   });
 }); 
+function exportarExcel() {
+  const tabla = document.querySelector("#tablaClientes table");
+
+  if (!tabla) {
+    alert("Primero presiona Consultar clientes.");
+    return;
+  }
+
+  const filas = [...tabla.rows].map(fila =>
+    [...fila.cells].map(celda =>
+      '"' + celda.textContent.trim().replace(/"/g, '""') + '"'
+    ).join(",")
+  );
+
+  const contenido = "\uFEFF" + filas.join("\r\n");
+  const archivo = new Blob([contenido], {
+    type: "text/csv;charset=utf-8;"
+  });
+
+  const enlace = document.createElement("a");
+  enlace.href = URL.createObjectURL(archivo);
+  enlace.download = "Clientes_RAMEN_PLUS.csv";
+  enlace.click();
+  URL.revokeObjectURL(enlace.href);
+}  
 </script>
 </body>
 </html>
