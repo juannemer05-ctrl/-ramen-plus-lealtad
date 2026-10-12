@@ -403,12 +403,7 @@ async function consultarHistorial() {
      m.cliente || "Cliente"   
 console.log("Movimiento:", m);
       const detalle = document.createElement("p");
-      detalle.textContent =
-        m.event_type === "purchase"
-          ? "🛒 Compra registrada"
-          : m.event_type === "reward_redeemed"
-          ? "🎁 Bebida gratis canjeada"
-          : m.event_type;
+    detalle.textContent = m.movimiento || "Movimiento sin descripción";  
 
       const fecha = document.createElement("small");
       fecha.textContent = m.fecha_hora || "";
