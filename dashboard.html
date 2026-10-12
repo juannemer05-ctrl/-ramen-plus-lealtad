@@ -124,7 +124,8 @@ small{color:#555}
 </section> 
   <section>
   <h3>📋 Historial de compras y canjes</h3>
- <input id="buscarHistorial" type="search" placeholder="🔎 Buscar historial por nombre del cliente" oninput="filtrarHistorial()">  
+ <input id="buscarHistorial" type="search" placeholder="🔎 Buscar historial por nombre del cliente" oninput="filtrarHistorial()">
+   <input id="fechaHistorial" type="date" onchange="filtrarHistorial()">
   <button onclick="consultarHistorial()">
     Consultar historial
   </button>
@@ -421,6 +422,25 @@ console.log("Movimiento:", m);
   }
 }
 function filtrarHistorial() {
+  const busqueda = document.getElementById("buscarHistorial").value.toLowerCase().trim();
+  const fecha = document.getElementById("fechaHistorial").value;
+  const tarjetas = document.querySelectorAll("#historialMovimientos > div");
+
+  tarjetas.forEach(tarjeta => {
+    const nombre = tarjeta.querySelector("strong")?.textContent.toLowerCase() || "";
+    const fechaTexto = tarjeta.querySelector("small")?.textContent.trim() || "";
+
+    const coincideNombre = nombre.includes(busqueda);
+
+    const fechaBuscada = fecha
+      ? fecha.split("-").reverse().join("/")
+      : "";
+
+    const coincideFecha = !fecha || fechaTexto.startsWith(fechaBuscada);
+
+    tarjeta.style.display = coincideNombre && coincideFecha ? "" : "none";
+  });
+}
   const busqueda = document.getElementById("buscarHistorial").value.toLowerCase().trim();
   const tarjetas = document.querySelectorAll("#historialMovimientos > div");
 
