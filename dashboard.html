@@ -21,6 +21,71 @@ button{background:#111;color:white;border:0;font-weight:bold;cursor:pointer}
 small{color:#555}
 #panel{display:none}
 #error{color:#b00020}
+ 
+#tablaClientes {
+  overflow-x: visible !important;
+}
+
+#tablaClientes table {
+  display: block;
+  width: 100% !important;
+}
+
+#tablaClientes table tr:first-child {
+  display: none;
+}
+
+#tablaClientes table tr:not(:first-child) {
+  display: block;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 16px;
+  padding: 14px;
+  margin: 14px 0;
+  box-shadow: 0 3px 10px #0000000d;
+}
+
+#tablaClientes table td {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 0 !important;
+  border-top: 1px solid #eee;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+#tablaClientes table td::before {
+  font-weight: bold;
+  text-align: left;
+  color: #555;
+}
+
+#tablaClientes table td:nth-child(1)::before {
+  content: "Cliente";
+}
+#tablaClientes table td:nth-child(2)::before {
+  content: "Compras";
+}
+#tablaClientes table td:nth-child(3)::before {
+  content: "Estado";
+}
+#tablaClientes table td:nth-child(4)::before {
+  content: "Bebidas canjeadas";
+}
+#tablaClientes table td:nth-child(5)::before {
+  content: "Registro";
+}
+#tablaClientes table td:nth-child(6)::before {
+  content: "Última compra";
+}
+#tablaClientes table td:nth-child(7)::before {
+  content: "Teléfono";
+}
+#tablaClientes table td:nth-child(8)::before {
+  content: "WhatsApp";
+}
+ 
 </style>
 </head>
 <body>
@@ -303,7 +368,7 @@ async function consultarHistorial() {
   try {
     const respuesta = await fetch(
       SUPABASE_URL +
-        "/rest/v1/loyalty_events?select=customer_id,event_type,created_at&order=created_at.desc&limit=100",
+        "/rest/v1/rpc/historial_movimientos_admin",
       {
         headers: {
           apikey: SUPABASE_KEY,
@@ -318,26 +383,7 @@ async function consultarHistorial() {
 
     const movimientos = await respuesta.json();
 
-    const clientesRespuesta = await fetch(
-      SUPABASE_URL + "/rest/v1/customers?select=id,name",
-      {
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: "Bearer " + token
-        }
-      }
-    );
-
-    if (!clientesRespuesta.ok) {
-      throw new Error("Error al consultar clientes");
-    }
-
-    const clientes = await clientesRespuesta.json();
-
-    const nombres = new Map(
-      clientes.map(c => [c.id, c.name])
-    );
-
+    
     contenedor.replaceChildren();
 
     if (!movimientos.length) {
@@ -354,7 +400,7 @@ async function consultarHistorial() {
 
       const nombre = document.createElement("strong");
       nombre.textContent =
-        nombres.get(m.customer_id) || "Cliente";
+     m.cliente || "Cliente"   
 
       const detalle = document.createElement("p");
       detalle.textContent =
