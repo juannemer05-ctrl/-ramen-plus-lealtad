@@ -124,6 +124,7 @@ small{color:#555}
 </section> 
   <section>
   <h3>📋 Historial de compras y canjes</h3>
+ <input id="buscarHistorial" type="search" placeholder="🔎 Buscar historial por nombre del cliente" oninput="filtrarHistorial()">  
   <button onclick="consultarHistorial()">
     Consultar historial
   </button>
@@ -390,7 +391,7 @@ async function consultarHistorial() {
       contenedor.textContent = "No hay movimientos registrados.";
       return;
     }
-
+window.historialMovimientos = movimientos;
     movimientos.forEach(m => {
       const tarjeta = document.createElement("div");
       tarjeta.style.cssText =
@@ -419,7 +420,15 @@ console.log("Movimiento:", m);
     console.error(error);
   }
 }
+function filtrarHistorial() {
+  const busqueda = document.getElementById("buscarHistorial").value.toLowerCase().trim();
+  const tarjetas = document.querySelectorAll("#historialMovimientos > div");
 
+  tarjetas.forEach(tarjeta => {
+    const nombre = tarjeta.querySelector("strong")?.textContent.toLowerCase() || "";
+    tarjeta.style.display = nombre.includes(busqueda) ? "" : "none";
+  });
+}
 </script>
 </body>
 </html>
