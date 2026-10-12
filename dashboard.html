@@ -411,7 +411,7 @@ async function consultarHistorial() {
           : m.event_type;
 
       const fecha = document.createElement("small");
-      fecha.textContent = new Date(
+      fecha.textContent = m.fecha_hora || "";
         m.created_at
       ).toLocaleString("es-MX", {
         timeZone: "America/Mexico_City"
