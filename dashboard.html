@@ -412,10 +412,7 @@ async function consultarHistorial() {
 
       const fecha = document.createElement("small");
       fecha.textContent = m.fecha_hora || "";
-        m.created_at
-      ).toLocaleString("es-MX", {
-        timeZone: "America/Mexico_City"
-      });
+        
 
       tarjeta.append(nombre, detalle, fecha);
       contenedor.appendChild(tarjeta);
