@@ -401,7 +401,7 @@ async function consultarHistorial() {
       const nombre = document.createElement("strong");
       nombre.textContent =
      m.cliente || "Cliente"   
-
+console.log("Movimiento:", m);
       const detalle = document.createElement("p");
       detalle.textContent =
         m.event_type === "purchase"
