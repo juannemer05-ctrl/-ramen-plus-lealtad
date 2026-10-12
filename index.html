@@ -4,8 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RAMEN+ | Tarjeta de Lealtad</title>
-
   <style>
+.progress-box {
+  margin: 20px 0;
+  padding: 12px;
+}
+
+#progress-text {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 16px;
+  background: #eeeeee;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+#progress-fill {
+  width: 0%;
+  height: 100%;
+  background: #FFD400;
+  border-radius: 20px;
+  transition: width 0.5s ease;
+}
+  
     * { box-sizing: border-box; }
 
     body {
@@ -119,6 +146,12 @@
   <div id="name">Cargando...</div>
 
   <div class="stamps" id="stamps"></div>
+  <div class="progress-box">
+  <div id="progress-text">Sellos: 0 de 6</div>
+  <div class="progress-bar">
+    <div id="progress-fill"></div>
+  </div>
+</div>
 
   <div class="reward" id="reward">
     Sigue acumulando visitas 🍜
@@ -203,7 +236,13 @@ async function cargarTarjeta() {
 
       stampsContainer.appendChild(stamp);
     }
+const sellos = Math.max(0, Math.min(6, Number(cliente.stamps) || 0));
 
+document.getElementById("progress-text").textContent =
+  `Sellos acumulados: ${sellos} de 6`;
+
+document.getElementById("progress-fill").style.width =
+  `${(sellos / 6) * 100}%`;
     const reward =
       document.getElementById("reward");
 
