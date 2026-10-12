@@ -125,7 +125,7 @@ small{color:#555}
   <section>
   <h3>📋 Historial de compras y canjes</h3>
  <input id="buscarHistorial" type="search" placeholder="🔎 Buscar historial por nombre del cliente" oninput="filtrarHistorial()">
-   <input id="fechaHistorial" type="date" style="width:100%;max-width:100%;box-sizing:border-box;" onchange="filtrarHistorial()">
+   <input id="fechaHistorial" type="date" style="display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;" onchange="filtrarHistorial()">
   <button onclick="consultarHistorial()">
     Consultar historial
   </button>
