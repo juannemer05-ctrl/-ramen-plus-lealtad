@@ -125,7 +125,7 @@ small{color:#555}
   <section>
   <h3>📋 Historial de compras y canjes</h3>
  <input id="buscarHistorial" type="search" placeholder="🔎 Buscar historial por nombre del cliente" oninput="filtrarHistorial()">
-   <input id="fechaHistorial" type="date" style="display:block;width:95%;max-width:95%;min-width:0;box-sizing:border-box;" onchange="filtrarHistorial()">
+   <input id="fechaHistorial" type="date" style="display:block;width:90%;max-width:90%;min-width:0;box-sizing:border-box;" onchange="filtrarHistorial()">
   <button onclick="consultarHistorial()">
     Consultar historial
   </button>
@@ -442,7 +442,16 @@ function filtrarHistorial() {
     tarjeta.style.display = coincideNombre && coincideFecha ? "" : "none";
   });
 }
-  
+const campoFecha = document.getElementById("fechaHistorial");
+if (campoFecha && !campoFecha.value) {
+  const hoy = new Date();
+  const fechaLocal = [
+    hoy.getFullYear(),
+    String(hoy.getMonth() + 1).padStart(2, "0"),
+    String(hoy.getDate()).padStart(2, "0")
+  ].join("-");
+  campoFecha.value = fechaLocal;
+}  
 </script>
 </body>
 </html>
