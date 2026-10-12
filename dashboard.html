@@ -442,14 +442,7 @@ function filtrarHistorial() {
     tarjeta.style.display = coincideNombre && coincideFecha ? "" : "none";
   });
 }
-  const busqueda = document.getElementById("buscarHistorial").value.toLowerCase().trim();
-  const tarjetas = document.querySelectorAll("#historialMovimientos > div");
-
-  tarjetas.forEach(tarjeta => {
-    const nombre = tarjeta.querySelector("strong")?.textContent.toLowerCase() || "";
-    tarjeta.style.display = nombre.includes(busqueda) ? "" : "none";
-  });
-}
+  
 </script>
 </body>
 </html>
