@@ -57,6 +57,13 @@ small{color:#555}
   <button onclick="cargarClientes()">Consultar clientes</button>
   <div id="tablaClientes" style="overflow-x:auto;"></div>
 </section> 
+  <section>
+  <h3>📋 Historial de compras y canjes</h3>
+  <button onclick="consultarHistorial()">
+    Consultar historial
+  </button>
+  <div id="historialMovimientos"></div>
+</section>
 </div>
 </main>
 
@@ -285,6 +292,96 @@ const filas = [
   enlace.click();
   URL.revokeObjectURL(enlace.href);
 }  
+  
+async function consultarHistorial() {
+  const contenedor = document.getElementById("historialMovimientos");
+
+  if (!contenedor) return;
+
+  contenedor.textContent = "Cargando historial...";
+
+  try {
+    const respuesta = await fetch(
+      SUPABASE_URL +
+        "/rest/v1/loyalty_events?select=customer_id,event_type,created_at&order=created_at.desc&limit=100",
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: "Bearer " + token
+        }
+      }
+    );
+
+    if (!respuesta.ok) {
+      throw new Error("Error al consultar movimientos");
+    }
+
+    const movimientos = await respuesta.json();
+
+    const clientesRespuesta = await fetch(
+      SUPABASE_URL + "/rest/v1/customers?select=id,name",
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: "Bearer " + token
+        }
+      }
+    );
+
+    if (!clientesRespuesta.ok) {
+      throw new Error("Error al consultar clientes");
+    }
+
+    const clientes = await clientesRespuesta.json();
+
+    const nombres = new Map(
+      clientes.map(c => [c.id, c.name])
+    );
+
+    contenedor.replaceChildren();
+
+    if (!movimientos.length) {
+      contenedor.textContent = "No hay movimientos registrados.";
+      return;
+    }
+
+    movimientos.forEach(m => {
+      const tarjeta = document.createElement("div");
+      tarjeta.style.cssText =
+        "background:white;border:1px solid #ddd;" +
+        "border-radius:15px;padding:16px;" +
+        "margin:12px 0;";
+
+      const nombre = document.createElement("strong");
+      nombre.textContent =
+        nombres.get(m.customer_id) || "Cliente";
+
+      const detalle = document.createElement("p");
+      detalle.textContent =
+        m.event_type === "purchase"
+          ? "🛒 Compra registrada"
+          : m.event_type === "reward_redeemed"
+          ? "🎁 Bebida gratis canjeada"
+          : m.event_type;
+
+      const fecha = document.createElement("small");
+      fecha.textContent = new Date(
+        m.created_at
+      ).toLocaleString("es-MX", {
+        timeZone: "America/Mexico_City"
+      });
+
+      tarjeta.append(nombre, detalle, fecha);
+      contenedor.appendChild(tarjeta);
+    });
+
+  } catch (error) {
+    contenedor.textContent =
+      "No se pudo cargar el historial.";
+    console.error(error);
+  }
+}
+
 </script>
 </body>
 </html>
