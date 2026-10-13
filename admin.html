@@ -445,7 +445,10 @@ async function verificarPremio() {
       }
     );
 
-    if (!respuesta.ok) return;
+    if (!respuesta.ok) {
+  alert("Error al consultar sellos: " + respuesta.status + " - " + await respuesta.text());
+  return;
+}
 
     const clientes = await respuesta.json();
     if (clientes.length && Number(clientes[0].stamp_count) >= 6) {
