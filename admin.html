@@ -429,7 +429,7 @@ async function verificarPremio() {
   const boton = document.getElementById("btnCanjear");
 
   boton.style.display = "none";
-  if (!id) return;
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) return;
 
   try {
     const token = sessionStorage.getItem("ramen_staff_token");
