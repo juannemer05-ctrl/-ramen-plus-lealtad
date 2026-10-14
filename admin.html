@@ -439,7 +439,7 @@ async function verificarPremio() {
     if (!token) return;
 
     const respuesta = await fetch(
-      `${SUPABASE_URL}/rest/v1/customers?id=eq.${encodeURIComponent(id)}&select=stamp_count`,
+    `${SUPABASE_URL}/rest/v1/rpc/get_loyalty_card?p_card_id=${encodeURIComponent(id)}`,  
       {
         headers: {
           apikey: SUPABASE_KEY,
@@ -454,7 +454,7 @@ async function verificarPremio() {
 }
 
     const clientes = await respuesta.json();
-    if (clientes.length && Number(clientes[0].stamp_count) >= 6) {
+    if (clientes.length && Number(clientes[0].stamps) >= 6) {
       boton.style.display = "block";
     }
   } catch (error) {
