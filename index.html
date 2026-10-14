@@ -240,7 +240,10 @@ const sellos = Math.max(0, Math.min(6, Number(cliente.stamps) || 0));
 
 document.getElementById("progress-text").textContent =
   `Sellos acumulados: ${sellos} de 6`;
-
+document.getElementById("progress-text").insertAdjacentHTML(
+  "afterend",
+  `<p id="canjes">🎁 Bebidas gratis canjeadas: ${cliente.rewards_redeemed ?? 0}</p>`
+);
 document.getElementById("progress-fill").style.width =
   `${(sellos / 6) * 100}%`;
     const reward =
