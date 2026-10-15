@@ -120,6 +120,18 @@ button:disabled {
 <button style="display:none" id="btnCanjear"id="btnCanjear" onclick="canjearPremio()">
   🎁 Canjear bebida gratis
 </button>
+  <div class="card">
+  <h2>🔎 Buscar cliente</h2>
+  <input
+    type="text"
+    id="buscarCliente"
+    placeholder="Nombre o celular"
+  >
+  <button type="button" onclick="buscarCliente()">
+    Buscar cliente
+  </button>
+  <div id="resultadosBusqueda"></div>
+</div>
 <div id="lectorQR" style="display:none; width:100%;"></div>
   <div id="resultado"></div>
 
@@ -506,6 +518,64 @@ async function abrirCamaraQR() {
     alert("❌ No se pudo abrir la cámara: " + error.message);
   }
 }
+async function buscarCliente() {
+  const texto = document.getElementById("buscarCliente").value.trim();
+  const resultados = document.getElementById("resultadosBusqueda");
+
+  if (texto.length < 2) {
+    resultados.textContent = "Escribe al menos 2 caracteres.";
+    return;
+  }
+
+  resultados.textContent = "Buscando cliente...";
+
+  try {
+    const sesion = JSON.parse(
+      localStorage.getItem("ramen_staff_session") || "null"
+    );
+
+    if (!sesion?.access_token) {
+      resultados.textContent = "Inicia sesión para buscar clientes.";
+      return;
+    }
+
+    const filtro = `or=(name.ilike.*${texto}*,phone.ilike.*${texto}*)`;
+    const respuesta = await fetch(
+      `${SUPABASE_URL}/rest/v1/customers?select=id,name,phone&${encodeURIComponent(filtro)}`,
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${sesion.access_token}`
+        }
+      }
+    );
+
+    if (!respuesta.ok) {
+      throw new Error(await respuesta.text());
+    }
+
+    const clientes = await respuesta.json();
+    resultados.replaceChildren();
+
+    if (clientes.length === 0) {
+      resultados.textContent = "No se encontraron clientes.";
+      return;
+    }
+
+    clientes.forEach(cliente => {
+      const boton = document.createElement("button");
+      boton.type = "button";
+      boton.textContent = `${cliente.name} — ${cliente.phone || "Sin celular"}`;
+      boton.onclick = () => {
+        document.getElementById("customerId").value = cliente.id;
+        resultados.textContent = "✅ Cliente seleccionado. Ya puedes agregar su compra.";
+      };
+      resultados.appendChild(boton);
+    });
+  } catch (error) {
+    resultados.textContent = "❌ Error: " + error.message;
+  }
+}  
 </script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 </body>
