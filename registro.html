@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registro | RAMEN+</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff7d6;
+      margin: 0;
+      padding: 24px;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+    }
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 28px 22px;
+      width: 100%;
+      max-width: 430px;
+      text-align: center;
+    }
+    h1 { font-size: 42px; margin: 0; }
+    .plus { color: #f5c400; }
+    h2 { margin-bottom: 8px; }
+    p { color: #555; }
+    input[type="text"], input[type="tel"] {
+      width: 100%;
+      padding: 15px;
+      margin: 9px 0;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      font-size: 16px;
+    }
+    label {
+      display: flex;
+      text-align: left;
+      gap: 10px;
+      margin: 18px 0;
+      font-size: 14px;
+    }
+    button {
+      background: #111;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 17px;
+      width: 100%;
+      font-size: 17px;
+      font-weight: bold;
+    }
+    #mensaje { margin-top: 18px; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>RAMEN<span class="plus">+</span></h1>
+    <h2>Regístrate y gana premios 🎁</h2>
+    <p>Compra 6 veces y tu 7ª bebida es GRATIS.</p>
+
+    <form id="registro">
+      <input id="nombre" type="text"
+        placeholder="Tu nombre completo"
+        minlength="2" maxlength="100" required>
+
+      <input id="celular" type="tel"
+        placeholder="Celular a 10 dígitos (opcional)"
+        inputmode="numeric" pattern="[0-9]{10}"
+        maxlength="10">
+
+      <label>
+        <input id="promos" type="checkbox">
+        Acepto recibir promociones de RAMEN+
+        por WhatsApp.
+      </label>
+
+      <button type="submit">Preparar mi registro</button>
+    </form>
+
+    <p id="mensaje"></p>
+  </main>
+
+  <script>
+    document.getElementById("registro")
+      .addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const nombre =
+          document.getElementById("nombre").value.trim();
+        const celular =
+          document.getElementById("celular").value.trim();
+        const promos =
+          document.getElementById("promos").checked;
+
+        if (nombre.length < 2 ||
+            (celular && !/^[0-9]{10}$/.test(celular))) {
+          document.getElementById("mensaje").textContent =
+            "Revisa tu nombre y celular.";
+          return;
+        }
+
+        const solicitud = {
+          nombre, celular, promos
+        };
+
+        sessionStorage.setItem(
+          "ramen_registro_pendiente",
+          JSON.stringify(solicitud)
+        );
+
+        document.getElementById("mensaje").textContent =
+          "✅ Datos preparados. Solicita al personal de RAMEN+ que complete tu registro.";
+      });
+  </script>
+</body>
+</html>
