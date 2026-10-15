@@ -530,11 +530,11 @@ async function buscarCliente() {
   resultados.textContent = "Buscando cliente...";
 
   try {
-    const sesion = JSON.parse(
-      localStorage.getItem("ramen_staff_session") || "null"
-    );
+    
+const token = sessionStorage.getItem("ramen_staff_token");
 
-    if (!sesion?.access_token) {
+
+  if (!token) {  
       resultados.textContent = "Inicia sesión para buscar clientes.";
       return;
     }
@@ -545,7 +545,9 @@ async function buscarCliente() {
       {
         headers: {
           apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${sesion.access_token}`
+          
+Authorization: `Bearer ${token}`
+
         }
       }
     );
