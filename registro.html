@@ -62,7 +62,7 @@
     <h2>Regístrate y gana premios 🎁</h2>
     <p>Compra 6 veces y tu 7ª bebida es GRATIS.</p>
 
-    <form id="registro">
+    <form id="registro" onsubmit="event.preventDefault();">
       <input id="nombre" type="text"
         placeholder="Tu nombre completo"
         minlength="2" maxlength="100" required>
@@ -130,6 +130,7 @@ window.location.href =
   document.getElementById("mensaje").textContent =
     "❌ Error: " + error.message;
 }     
+       });
   </script>
 </body>
 </html>
