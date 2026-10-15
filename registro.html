@@ -128,7 +128,7 @@ window.location.href =
   "index.html?id=" + encodeURIComponent(id); 
 } catch (error) {
   document.getElementById("mensaje").textContent =
-    "❌ No se pudo completar el registro.";
+    "❌ Error: " + error.message;
 }     
   </script>
 </body>
