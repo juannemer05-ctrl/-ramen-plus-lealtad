@@ -78,7 +78,7 @@
         por WhatsApp.
       </label>
 
-      <button type="submit">Preparar mi registro</button>
+      <button type="submit">Crear mi tarjeta RAMEN+</button>
     </form>
 
     <p id="mensaje"></p>
@@ -86,7 +86,7 @@
 
   <script>
     document.getElementById("registro")
-      .addEventListener("submit", function(e) {
+     .addEventListener("submit", async function(e) { 
         e.preventDefault();
 
         const nombre =
@@ -103,18 +103,33 @@
           return;
         }
 
-        const solicitud = {
-          nombre, celular, promos
-        };
+   try {
+const respuesta = await fetch(
+  "https://hkprarjyormsogskdddz.supabase.co/rest/v1/rpc/registro_publico_ramen",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": "sb_publishable_YAKtkxRA1sH3zdE3R_4iSg_KScO8EtI"
+    },
+    body: JSON.stringify({
+      p_name: nombre,
+      p_phone: celular || null
+    })
+  }
+);
+    if (!respuesta.ok) {
+  throw new Error(await respuesta.text());
+}
 
-        sessionStorage.setItem(
-          "ramen_registro_pendiente",
-          JSON.stringify(solicitud)
-        );
+const id = await respuesta.json();
 
-        document.getElementById("mensaje").textContent =
-          "✅ Datos preparados. Solicita al personal de RAMEN+ que complete tu registro.";
-      });
+window.location.href =
+  "index.html?id=" + encodeURIComponent(id); 
+} catch (error) {
+  document.getElementById("mensaje").textContent =
+    "❌ No se pudo completar el registro.";
+}     
   </script>
 </body>
 </html>
